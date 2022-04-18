@@ -47,18 +47,19 @@ postgres=# exit
 Or maybe, you can execute sql command from outsite container
 
 ```bash
-$ docker-compose exec blog_db psql -U postgres --port 5432 -h localhost -a blog -c "\l"
-l
-                                 List of databases
-   Name    |  Owner   | Encoding |  Collate   |   Ctype    |   Access privileges
------------+----------+----------+------------+------------+-----------------------
- banco     | postgres | UTF8     | en_US.utf8 | en_US.utf8 |
- postgres  | postgres | UTF8     | en_US.utf8 | en_US.utf8 |
- template0 | postgres | UTF8     | en_US.utf8 | en_US.utf8 | =c/postgres          +
-           |          |          |            |            | postgres=CTc/postgres
- template1 | postgres | UTF8     | en_US.utf8 | en_US.utf8 | =c/postgres          +
-           |          |          |            |            | postgres=CTc/postgres
-(4 rows)
+$ docker-compose exec banco_db psql -U postgres -a banco -c "\dt"
+dt
+            List of relations
+ Schema |    Name     | Type  |  Owner
+--------+-------------+-------+----------
+ public | cliente     | table | postgres
+ public | ctacliente  | table | postgres
+ public | cuenta      | table | postgres
+ public | pagos       | table | postgres
+ public | prestamo    | table | postgres
+ public | prestatario | table | postgres
+ public | sucursal    | table | postgres
+(7 rows)
 ```
 
 ## Tricks
@@ -112,4 +113,35 @@ banco=# \dt
 (7 rows)
 
 banco=# exit
+```
+
+## Executing sql scripts
+
+* Importante compartir un volumen donde compartirá la carpeta de los scripts
+```yml
+    volumes:
+      - data:/var/lib/postgresql/data
+      - ../scripts/:/code/scripts/
+```
+
+* Configurando esto ya podremos ejecutar los scripts desde el contenedor sin necesitar de copiarlos y ejecutarlos
+
+```bash
+$ docker-compose exec banco_db psql -U postgres -W -h localhost --port 5432 -a banco -f /code/scripts/test.sql
+Password:
+-- test1
+-- \dt muestra todas las tablas de la base de datos
+-- es similar a SHOW TABLES en MySQL
+\dt
+            List of relations
+ Schema |    Name     | Type  |  Owner
+--------+-------------+-------+----------
+ public | cliente     | table | postgres
+ public | ctacliente  | table | postgres
+ public | cuenta      | table | postgres
+ public | pagos       | table | postgres
+ public | prestamo    | table | postgres
+ public | prestatario | table | postgres
+ public | sucursal    | table | postgres
+(7 rows)
 ```
