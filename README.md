@@ -1,5 +1,11 @@
 # Postgres and Docker that will make your life easier
 
+## Diagrama Modelo Relacional
+
+--- 
+![DB diagram](./images/Captura.JPG "diagram")
+---
+
 ## Run container
 
 ```bash
